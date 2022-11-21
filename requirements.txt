@@ -1,0 +1,9 @@
+Django==4.0.3
+pkg-resources==0.0.0
+psycopg2-binary==2.8.6
+pytz==2019.2
+ipython
+pillow
+django-cleanup
+django-resized
+django-formtools
