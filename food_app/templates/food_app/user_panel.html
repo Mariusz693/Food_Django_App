@@ -1,0 +1,87 @@
+{% extends 'food_app/main.html' %}
+{% block content_main %}
+<div class="container-card-style">
+    <div class="row row-header-style">
+        <div class="col">
+            <h5 class="text-uppercase">Twój panel</h5>
+            <ul class="list-none-style">
+                <li>Imię i Nazwisko: <b>{{ user.get_full_name }}</b></li>
+                <li>Nazwa użytkownika: <b>{{ user }}</b></li>
+                <li>Email: <b>{{ user.email }}</b></li>
+            </ul>
+            <div class="user-menu-style">
+                <div>
+                    <a href="{% url 'user-update' %}">
+                        <i class="far fa-edit"></i>
+                        <span>Edytuj profil</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="{% url 'user-password-update' %}">
+                        <i class="far fa-edit"></i>
+                        <span>Edytuj hasło</span>
+                    </a>
+                </div>
+                <div class="danger-style">
+                    <a href="{% url 'user-delete' %}">
+                        <i class="far fa-minus-square danger-style"></i>
+                        <span class="danger-style">Usuń profil</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col d-flex justify-content-end">
+            <img src="{{ user.avatar.url }}" class="panel-avatar-style" alt="Awatar">
+        </div>
+    </div>
+    <div class="row row-card-style">
+        <div class="col">
+            <div class="user-menu-style">
+                <div>
+                    <a href="">
+                        <i class="far fa-plus-square"></i>
+                        <span>Dodaj przepis</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="">
+                        <i class="far fa-plus-square"></i>
+                        <span>Dodaj plan</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col d-flex justify-content-end">
+            <div class="user-alert-style">
+                <div>
+                    <a href="#user-recipe">
+                        <span>Przepisy: {{ user.recipes.count }}</span>
+                        <i class="fa fa-arrow-circle-down"></i>
+                    </a>
+                </div>
+                <div>
+                    <a href="#user-schedule">
+                        <span>Plany: {{ user.schedules.count }}</span>
+                        <i class="fa fa-arrow-circle-down"></i>
+                    </a>
+                </div>
+                <div>
+                    <a href="#user-vote">
+                        <span>Głosy: {{ user.votes.count }}</span>
+                        <i class="fa fa-arrow-circle-down"></i>
+                    </a>
+                </div>
+                <div>
+                    <a href="#user-comment">
+                        <span>Komentarze: {{ user.comments.count }}</span>
+                        <i class="fa fa-arrow-circle-down"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- //--------------------------- page content -------------------------// -->
+    {% block content_user_main %}{% endblock content_user_main %}
+    <!-- //--------------------------- page content end ---------------------// -->
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'food_app/base.html' %}
+{% load static %}
+{% block content %}
+<div class="row container-body-style">
+    <div class="col-lg-9 col-md-10 col-sm-11">
+        <div class="row row-index-style" id="about">
+            <div class="col-lg-3 col-md-4 col-sm-5">
+                <img src="{% static 'food_app/image/about.jpeg' %}" class="img-index-style" alt="Jedzonko">
+            </div>
+            <div class="col-lg-9 col-md-8 col-sm-7">
+                <h3>Na naszej stronie możesz:</h3>
+                <ul>
+                    <li>wyświetlać listy przepisów,</li>
+                    <li>wyświetlać listy składników,</li>
+                    <li>dodawać i modyfikować przepisy,</li>
+                    <li>tworzyć, wyświetlać i modyfikować harmonogram żywienia,</li>
+                    <li>głosować na przepisy (podoba mi się / nie podoba mi się)</li>
+                </ul>
+            </div>
+        </div>
+        <div class="row row-index-style" id="contact">
+            <div class="col">
+                <h3>Kontakt</h3>
+                <address>
+                    Zaplanuj Jedzonko<br>
+                    ul. Prosta 0<br>
+                    00-000 Polska<br>
+                    <a href="mailto:webmaster@localhost.com">Napisz do nas</a>
+                </address>
+            </div>
+            <div class="col">
+                <h3>Zapisz się do newslettera</h3>
+                <div>
+                    <a href="#">
+                        <i class="fab fa-facebook-square icon-index-style"></i>
+                    </a>
+                    <a href="#">
+                        <i class="fab fa-twitter-square icon-index-style"></i>
+                    </a>
+                    <a href="#">
+                        <i class="fab fa-instagram icon-index-style"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

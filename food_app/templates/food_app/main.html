@@ -1,0 +1,33 @@
+{% extends 'food_app/base.html' %}
+{% block content %}
+<div class="row container-body-style">
+    <div class="col-12">
+        <div class="wrapper-style">
+            <div class="sidebar-style">
+                <ul>
+                    <li><a href="">Przepisy</a></li>
+                    <li><a href="#">Plany</a></li>
+                </ul>
+                {% if request.user.is_authenticated %}
+                    <h5></h5>
+                    <ul>
+                        <li><a href="{% url 'user-panel' %}">Panel</a></li>
+                        <li><a href="{% url 'user-logout' %}">Wyloguj</a></li>
+                    </ul>
+                {% else %}
+                    <h5></h5>
+                    <ul>    
+                        <li><a href="{% url 'user-login' %}">Zaloguj</a></li>
+                        <li><a href="{% url 'user-register' %}">Rejestracja</a></li>
+                    </ul>
+                {% endif  %}
+            </div>
+            <div class="main-content-style">
+                <!-- //--------------------------- page content -------------------------// -->
+                    {% block content_main %}{% endblock content_main %}
+                <!-- //--------------------------- page content end ---------------------// -->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

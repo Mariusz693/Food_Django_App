@@ -1,0 +1,52 @@
+{% extends 'food_app/main.html' %}
+{% block content_main %}
+<div class="container-card-style">
+    <form class="form-style" action="" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row row-header-style">
+            <div class="col d-flex">
+                <h5 class="text-uppercase">Edytuj profil</h5>
+            </div>
+            <div class="col d-flex justify-content-end">
+                <button type="button" onclick="history.back()" class="button-style">Anuluj</button>
+                <button type="submit" class="button-style">Zapisz</button>
+            </div>
+        </div>
+        <div class="row row-form-style">
+            <div class="col-4 label-style">{{ form.username.label }}</div>
+            <div class="col-lg-4 col-md-6 col-sm-8">
+                {{ form.username }}
+                {{ form.username.errors }}
+            </div>
+        </div>
+        <div class="row row-form-style">
+            <div class="col-4 label-style">{{ form.first_name.label }}</div>
+            <div class="col-lg-4 col-md-6 col-sm-8">
+                {{ form.first_name }}
+                {{ form.first_name.errors }}
+            </div>
+        </div>
+        <div class="row row-form-style">
+            <div class="col-4 label-style">{{ form.last_name.label }}</div>
+            <div class="col-lg-4 col-md-6 col-sm-8">
+                {{ form.last_name }}
+                {{ form.last_name.errors }}
+            </div>
+        </div>
+        <div class="row row-form-style">
+            <div class="col-4 label-style">{{ form.email.label }}</div>
+            <div class="col-4">
+                {{ form.email }}
+                {{ form.email.errors }}
+            </div>
+        </div>
+        <div class="row row-form-style">
+            <div class="col-4 label-style">{{ form.avatar.label }}</div>
+            <div class="col-8 form-link-style">
+                {{ form.avatar }}
+                {{ form.avatar.errors }}
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

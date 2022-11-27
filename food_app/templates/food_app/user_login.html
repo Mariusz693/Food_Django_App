@@ -1,0 +1,49 @@
+{% extends 'food_app/main.html' %}
+{% block content_main %}
+<div class="container-card-style">
+    <form class="form-style" action="" method="POST">
+        {% csrf_token %}
+        <div class="row row-header-style">
+            <div class="col d-flex">
+                <h5 class="text-uppercase">Logowanie</h5>
+            </div>
+            <div class="col d-flex justify-content-end">
+                <button type="button" onclick="history.back()" class="button-style">Anuluj</button>
+                <button type="submit" class="button-style">Zaloguj</button>
+            </div>
+        </div>
+        {% if messages %}
+            <div class="row row-form-style">
+                <div class="col-4"></div>
+                <div class="col-lg-4 col-md-6 col-sm-8">
+                    {% for message in messages %}
+                        <p class="text-center">
+                            <strong>{{ message.message }}</strong>
+                        </p>
+                    {% endfor %} 
+                </div>
+            </div>
+        {% endif %}
+        <div class="row row-form-style">
+            <div class="col-4 label-style">{{ form.username.label }}</div>
+            <div class="col-lg-4 col-md-6 col-sm-8">
+                {{ form.username }}
+                {{ form.username.errors }}
+            </div>
+        </div>
+        <div class="row row-form-style">
+            <div class="col-4 label-style">{{ form.password.label }}</div>
+            <div class="col-lg-4 col-md-6 col-sm-8">
+                {{ form.password }}
+                {{ form.password.errors }}
+            </div>
+        </div>
+        <div class="row row-form-style">
+            <div class="col-4"></div>
+            <div class="col-lg-4 col-md-6 col-sm-8 link-password-reset-style">
+                <a href="{% url 'user-password-reset' %}">Zapomniałem hasła...</a>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

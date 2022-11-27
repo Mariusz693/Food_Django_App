@@ -1,0 +1,84 @@
+{% extends 'food_app/main.html' %}
+{% block content_main %}
+<div class="container-card-style">
+    {% if messages %}
+        <div class="row row-header-style">
+            <div class="col d-flex">
+                <h5 class="text-uppercase">Rejestracja</h5>
+            </div>
+        </div>
+        <div class="row row-form-style">
+            <div class="col-4"></div>
+            <div class="col-lg-4 col-md-6 col-sm-8">
+                {% for message in messages %}
+                    <p class="text-center">
+                        <strong>{{ message.message }}</strong>
+                    </p>
+                {% endfor %} 
+            </div>
+        </div>
+    {% else %}
+        <form class="form-style" action="" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row row-header-style">
+                <div class="col d-flex">
+                    <h5 class="text-uppercase">Rejestracja</h5>
+                </div>
+                <div class="col d-flex justify-content-end">
+                    <button type="button" onclick="history.back()" class="button-style">Anuluj</button>
+                    <button type="submit" class="button-style">Zarejestruj</button>
+                </div>
+            </div>
+            <div class="row row-form-style">
+                <div class="col-4 label-style">{{ form.username.label }}</div>
+                <div class="col-lg-4 col-md-6 col-sm-8">
+                    {{ form.username }}
+                    {{ form.username.errors }}
+                </div>
+            </div>
+            <div class="row row-form-style">
+                <div class="col-4 label-style">{{ form.first_name.label }}</div>
+                <div class="col-lg-4 col-md-6 col-sm-8">
+                    {{ form.first_name }}
+                    {{ form.first_name.errors }}
+                </div>
+            </div>
+            <div class="row row-form-style">
+                <div class="col-4 label-style">{{ form.last_name.label }}</div>
+                <div class="col-lg-4 col-md-6 col-sm-8">
+                    {{ form.last_name }}
+                    {{ form.last_name.errors }}
+                </div>
+            </div>
+            <div class="row row-form-style">
+                <div class="col-4 label-style">{{ form.email.label }}</div>
+                <div class="col-lg-4 col-md-6 col-sm-8">
+                    {{ form.email }}
+                    {{ form.email.errors }}
+                </div>
+            </div>
+            <div class="row row-form-style">
+                <div class="col-4 label-style">{{ form.avatar.label }}</div>
+                <div class="col-lg-4 col-md-6 col-sm-8">
+                    {{ form.avatar }}
+                    {{ form.avatar.errors }}
+                </div>
+            </div>
+            <div class="row row-form-style">
+                <div class="col-4 label-style">{{ form.password.label }}</div>
+                <div class="col-lg-4 col-md-6 col-sm-8">
+                    {{ form.password }}
+                    {{ form.password.errors }}
+                </div>
+            </div>
+            <div class="row row-form-style">
+                <div class="col-4 label-style">{{ form.password_repeat.label }}</div>
+                <div class="col-lg-4 col-md-6 col-sm-8">
+                    {{ form.password_repeat }}
+                    {{ form.password_repeat.errors }}
+                </div>
+            </div>
+        </form>
+    {% endif %}
+</div>
+{% endblock %}
