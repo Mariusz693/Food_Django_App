@@ -313,3 +313,37 @@ a {
 .form-link-style a {
     color: var(--green-color)!important;
 }
+
+.pagination-style {
+    padding-left: 15px;
+    padding-right: 15px;
+    color: var(--gray-lighter-color);
+}
+
+.pagination-style a {
+    color: var(--green-color)!important;
+}
+
+.search-form-style {
+    margin-top: -5px;
+}
+
+.search-form-style input {
+    padding-right: 30px!important;
+}
+
+.search-form-style button {
+    background-color: transparent;
+    border: none;
+    color: var(--green-color)!important;
+    outline: none;
+    margin-left: -30px
+}
+
+.table-style tr td {
+    vertical-align: middle;
+}
+
+.table-style a {
+    color: var(--green-color);
+}

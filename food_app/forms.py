@@ -2,8 +2,13 @@ from django import forms
 from django.contrib.auth import authenticate
 from django.core.exceptions import ValidationError
 
-from .models import User
+from .models import User, Ingredient
 from .validators import validate_password
+
+
+class DurationInput(forms.TimeInput):
+
+    input_type = 'time'
 
 
 class UserRegisterForm(forms.ModelForm):
@@ -151,3 +156,23 @@ class UserPasswordSetForm(forms.Form):
             validate_password(password=password_new)
         except ValidationError as e:
             self.add_error('password_new', e)
+
+
+class SearchForm(forms.Form):
+
+    name = forms.CharField(max_length=64, required=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['name'].widget.attrs['placeholder'] = 'Nazwa'
+
+
+class IngredientForm(forms.ModelForm):
+
+    class Meta:
+        model = Ingredient
+        fields = ['name', 'create_by']
+        widgets = {
+            'create_by': forms.HiddenInput(),
+        }
+

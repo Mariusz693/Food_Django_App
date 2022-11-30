@@ -1,16 +1,27 @@
 from django.shortcuts import render, redirect
-from django.views.generic import View, FormView, DetailView, UpdateView, DeleteView
+from django.views.generic import View, FormView, DetailView, UpdateView, DeleteView, CreateView, ListView
 from django.urls import reverse_lazy
 from django.contrib.auth import login, logout
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
-from .models import User, UserUniqueToken
+from .models import User, UserUniqueToken, Ingredient
 from .forms import UserRegisterForm, UserLoginForm, UserUpdateForm, UserPasswordUpdateForm, \
-    UserPasswordResetForm, UserPasswordSetForm
+    UserPasswordResetForm, UserPasswordSetForm, SearchForm, IngredientForm
 from .validators import validate_token
 
 # Create your views here.
+
+
+class TestMixin(UserPassesTestMixin):
+    
+    def handle_no_permission(self):
+
+        if self.request.user.is_authenticated:
+            
+            return redirect(reverse_lazy('user-panel'))
+        
+        return redirect(reverse_lazy('user-login')+f'?next={self.request.get_full_path()}')
 
 
 class IndexView(View):
@@ -244,3 +255,110 @@ class UserDeleteView(LoginRequiredMixin, DeleteView):
     def get_object(self, *args, **kwargs):
        
         return self.request.user
+
+
+class UserIngredientView(LoginRequiredMixin, ListView):
+
+    """
+    Return the list all ingredients create by user
+    """
+    model = Ingredient
+    template_name = 'food_app/user_ingredient.html'
+    context_object_name = 'ingredient_list'
+    paginate_by = 10
+
+    def get_queryset(self, *args, **kwargs):
+
+        ingredient_list = self.request.user.ingredients.all()
+        self.form = SearchForm(self.request.GET)
+        self.search_count = ''
+
+        if self.form.is_valid():
+
+            if self.form.changed_data:
+                ingredient_list = ingredient_list.filter(name__icontains=self.form.cleaned_data['name'])
+                self.search_count = ingredient_list.count()
+             
+        return ingredient_list
+        
+    def get_context_data(self, *args, **kwargs):
+        
+        context = super().get_context_data(*args, **kwargs)
+        
+        context['form'] = self.form
+        context['search_count'] = self.search_count
+        
+        if self.search_count:
+            context['path_pagination'] = self.request.get_full_path().split('&page=')[0] + '&page='
+        
+        else:
+            context['path_pagination'] = self.request.get_full_path().split('?')[0] + '?page='
+        
+        return context
+
+
+class IngredientCreateView(LoginRequiredMixin, CreateView):
+
+    """
+    Return the create ingredient view
+    """
+    model = Ingredient
+    form_class = IngredientForm
+    template_name = 'food_app/ingredient_form.html'
+    
+    def get_success_url(self, *args, **kwargs):
+
+        return reverse_lazy('user-panel')
+
+    def get_initial(self, *args, **kwargs):
+
+        initial = super().get_initial(*args, **kwargs)
+        initial['create_by'] = self.request.user 
+        
+        return initial
+
+
+class IngredientUpdateView(TestMixin, UpdateView):
+
+    """
+    Return the update ingredient view
+    """
+    def test_func(self):
+
+        return self.get_object().create_by == self.request.user
+
+    model = Ingredient
+    form_class = IngredientForm
+    template_name = 'food_app/ingredient_form.html'
+    context_object_name = 'ingredient'
+    
+    def get_success_url(self, *args, **kwargs):
+
+        return self.request.GET.get('next') + '#user-ingredient'
+
+
+class IngredientDeleteView(TestMixin, DeleteView):
+
+    """
+    Return the delete ingredient view
+    """
+    def test_func(self):
+
+        return self.get_object().create_by == self.request.user
+
+    model = Ingredient
+    template_name = 'food_app/ingredient_delete.html'
+    context_object_name = 'ingredient'
+
+    def get_success_url(self, *args, **kwargs):
+
+        return reverse_lazy('user-ingredient') + '#user-ingredient'
+
+    def form_valid(self, form, *args, **kwargs):
+        
+        if self.get_object().recipes.all():
+            messages.error(self.request, message='Twój składnik jest zawarty w pzepisie, nie można usunąć !!!')
+
+            return super().form_invalid(form, *args, **kwargs)
+        
+        return super().form_valid(form, *args, **kwargs)

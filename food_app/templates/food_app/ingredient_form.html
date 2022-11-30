@@ -1,0 +1,31 @@
+{% extends 'food_app/main.html' %}
+{% block content_main %}
+<div class="container-card-style">
+    <form class="form-style" action="" method="POST">
+        {% csrf_token %}
+        <div class="row row-header-style">
+            <div class="col d-flex">
+                <h5 class="text-uppercase">
+                    {% if ingredient %}
+                        Edytuj składnik
+                    {% else %}
+                        Dodaj składnik
+                    {% endif %}
+                </h5>
+            </div>
+            <div class="col d-flex justify-content-end">
+                <button type="button" onclick="history.back()" class="button-style">Anuluj</button>
+                <button type="submit" class="button-style">Zapisz</button>
+            </div>
+        </div>
+        <div class="row row-form-style">
+            <div class="col-4 label-style">{{ form.name.label }}</div>
+            <div class="col-lg-4 col-md-6 col-sm-8">
+                {{ form.name }}
+                {{ form.name.errors }}
+                {{ form.create_by }}
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

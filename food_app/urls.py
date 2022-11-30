@@ -1,7 +1,8 @@
 from django.urls import path
 
 from .views import IndexView, UserRegisterView, UserActiveView, UserLoginView, UserLogoutView, UserPanelView, \
-    UserUpdateView, UserPasswordUpdateView, UserPasswordResetView, UserPasswordSetView, UserDeleteView
+    UserUpdateView, UserPasswordUpdateView, UserPasswordResetView, UserPasswordSetView, UserDeleteView, \
+        UserIngredientView, IngredientCreateView, IngredientUpdateView, IngredientDeleteView
 
 urlpatterns = [
     path('', view=IndexView.as_view(), name='index'),
@@ -15,4 +16,8 @@ urlpatterns = [
     path('user/password/reset/', view=UserPasswordResetView.as_view(), name='user-password-reset'),
     path('user/password/set/', view=UserPasswordSetView.as_view(), name='user-password-set'),
     path('user/delete/', view=UserDeleteView.as_view(), name='user-delete'),
+    path('user/ingredient/', view=UserIngredientView.as_view(), name='user-ingredient'),
+    path('ingredient/create/', view=IngredientCreateView.as_view(), name='ingredient-create'),
+    path('ingredient_update/<int:pk>/', view=IngredientUpdateView.as_view(), name='ingredient-update'),
+    path('ingredient_delete/<int:pk>/', view=IngredientDeleteView.as_view(), name='ingredient-delete'),
 ]

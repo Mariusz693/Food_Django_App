@@ -22,7 +22,7 @@
                         <span>Edytuj hasło</span>
                     </a>
                 </div>
-                <div class="danger-style">
+                <div>
                     <a href="{% url 'user-delete' %}">
                         <i class="far fa-minus-square danger-style"></i>
                         <span class="danger-style">Usuń profil</span>
@@ -47,6 +47,12 @@
                     <a href="">
                         <i class="far fa-plus-square"></i>
                         <span>Dodaj plan</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="{% url 'ingredient-create' %}">
+                        <i class="far fa-plus-square"></i>
+                        <span>Dodaj składnik</span>
                     </a>
                 </div>
             </div>
@@ -74,6 +80,12 @@
                 <div>
                     <a href="#user-comment">
                         <span>Komentarze: {{ user.comments.count }}</span>
+                        <i class="fa fa-arrow-circle-down"></i>
+                    </a>
+                </div>
+                <div>
+                    <a href="{% url 'user-ingredient' %}#user-ingredient">
+                        <span>Składniki: {{ user.ingredients.count }}</span>
                         <i class="fa fa-arrow-circle-down"></i>
                     </a>
                 </div>

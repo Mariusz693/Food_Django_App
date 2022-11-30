@@ -1,0 +1,34 @@
+{% extends 'food_app/main.html' %}
+{% block content_main %}
+<div class="container-card-style">
+    <form class="form-style" action="" method="POST">
+        {% csrf_token %}
+        <div class="row row-header-style">
+            <div class="col d-flex">
+                <h5 class="text-uppercase">Usuń składnik</h5>
+            </div>
+            <div class="col d-flex justify-content-end">
+                <button type="button" onclick="history.back()" class="button-style">Anuluj</button>
+                <button type="submit" class="button-style">Potwierdź</button>
+            </div>
+        </div>
+        <div class="row row-form-style">
+            <div class="col-lg-4 col-md-3 col-sm-2"></div>
+            <div class="col-lg-4 col-md-6 col-sm-8">
+                {% if messages %}
+                    {% for message in messages %}
+                        <p class="text-center">
+                            <strong>{{ message.message }}</strong>
+                        </p>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-center">
+                        <strong>Potwierdź usunięcie składnika - {{ ingredient }}</strong>
+                    </p>
+                {% endif %}
+            </div>
+            <div class="col-lg-4 col-md-3 col-sm-2"></div>
+        </div>
+    </form>
+</div>
+{% endblock %}

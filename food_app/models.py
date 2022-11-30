@@ -73,3 +73,27 @@ class UserUniqueToken(models.Model):
     token = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
 
+class Ingredient(models.Model):
+
+    class Meta:
+        verbose_name = 'Składnik'
+        verbose_name_plural = 'Składniki'
+        ordering = ['name']
+
+    name = models.CharField(
+        verbose_name='Nazwa składnika',
+        max_length=128,
+        unique=True,
+        error_messages={'unique': 'Składnik już zapisany w bazie'},
+        )
+    create_by = models.ForeignKey(
+        'User',
+        related_name='ingredients',
+        verbose_name='Stworzył',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+        )
+
+    def __str__(self):
+        return self.name

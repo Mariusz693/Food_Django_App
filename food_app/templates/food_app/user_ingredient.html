@@ -1,0 +1,66 @@
+{% extends 'food_app/user_panel.html' %}
+{% block content_user_main %}
+    <div class="row row-card-style" id="user-ingredient">
+        <div class="col-lg-9 col-md-8 col-sm-7 d-flex">
+            <h5>
+                {% if search_count or search_count == 0 %}
+                    Znaleziono ({{ search_count }})
+                {% else %}
+                    Twoje Składniki
+                {% endif %}
+                {% if is_paginated %}
+                    <span class="pagination-style">
+                        {% if page_obj.number > 1 %}
+                            <a href="{{ path_pagination }}{{ page_obj.number|add:'-1' }}#user-ingredient">&laquo;</a>
+                        {% endif %}
+                        {% if page_obj.paginator.num_pages <= 1 %}
+                            {{ pass }}
+                        {% else %}
+                            {% for i in page_obj.paginator.page_range %}
+                                {% if page_obj.number == i %}
+                                    {{ i }}
+                                {% elif i > page_obj.number|add:'-4' and i < page_obj.number|add:'4' %}
+                                    <a href="{{ path_pagination }}{{ i }}#user-ingredient">{{ i }}</a>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                        {% if page_obj.paginator.num_pages > page_obj.number %}
+                            <a href="{{ path_pagination }}{{ page_obj.number|add:'1' }}#user-ingredient">&raquo;</a>
+                        {% endif %}
+                    </span>
+                {% endif %}
+            </h5>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-5 d-flex justify-content-end">
+            <form action="{% url 'user-ingredient' %}#user-ingredient" method="GET" class="form-style search-form-style">
+                {{ form.name }}
+                <button type="submit" title="Szukaj"><i class="fa fa-search"></i></button>
+            </form>
+        </div>
+    </div>
+    <div class="row row-card-style">
+        <div class="col">
+            <table class="table table-style">
+                <tbody>
+                    {% for ingredient in ingredient_list %}
+                        <tr>
+                            <td class="col-10">
+                                <b>{{ ingredient.name }}</b>
+                            </td>
+                            <td class="col-1 text-center">
+                                <a href="{% url 'ingredient-update' pk=ingredient.pk %}?next={{ request.get_full_path }}" title="Edytuj">
+                                    <i class="far fa-edit"></i>
+                                </a>    
+                            </td>
+                            <td class="col-1 text-center">
+                                <a href="{% url 'ingredient-delete' pk=ingredient.pk %}" title="Usuń">
+                                    <i class="far fa-minus-square danger-style"></i>
+                                </a>    
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
