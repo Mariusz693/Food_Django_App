@@ -3,6 +3,34 @@
 {% block content %}
 <div class="row container-body-style">
     <div class="col-lg-9 col-md-10 col-sm-11">
+        {% if recipe_list %}
+            <div class="row row-index-style" id="carousel">
+                <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+                    <ol class="carousel-indicators carousel-indicators-style">
+                        <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+                        <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+                        <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+                    </ol>
+                    <div class="carousel-inner">
+                        {% for recipe in recipe_list %}
+                            <div class="carousel-item carousel-item-style {% if forloop.first %} active {% endif %}">
+                                <img src="{{ recipe.image.url }}" alt="Zdjęcie">
+                                <div>
+                                    <h5><b>{{ recipe }}</b></h5>
+                                    <p>Polubienia: {{ recipe.likes.all.count }} <i class="fa fa-thumbs-up"></i></p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <a class="carousel-button-style carousel-button-prev-style" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                    </a>
+                    <a class="carousel-button-style carousel-button-next-style" href="#carouselExampleIndicators" role="button" data-slide="next">
+                        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                    </a>
+                </div>
+            </div>
+        {% endif %}
         <div class="row row-index-style" id="about">
             <div class="col-lg-3 col-md-4 col-sm-5">
                 <img src="{% static 'food_app/image/about.jpeg' %}" class="img-index-style" alt="Jedzonko">
@@ -45,4 +73,4 @@
         </div>
     </div>
 </div>
-{% endblock %}
+{% endblock content %}

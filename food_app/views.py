@@ -1,16 +1,40 @@
-from django.shortcuts import render, redirect
+import os
+from copy import deepcopy
+
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import View, FormView, DetailView, UpdateView, DeleteView, CreateView, ListView
 from django.urls import reverse_lazy
 from django.contrib.auth import login, logout
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from formtools.wizard.views import SessionWizardView
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
+from django.core.paginator import Paginator
+from django.db.models import Count
 
-from .models import User, UserUniqueToken, Ingredient
+from .models import User, UserUniqueToken, Ingredient, Recipe, CommentRecipe
 from .forms import UserRegisterForm, UserLoginForm, UserUpdateForm, UserPasswordUpdateForm, \
-    UserPasswordResetForm, UserPasswordSetForm, SearchForm, IngredientForm
+    UserPasswordResetForm, UserPasswordSetForm, SearchForm, IngredientForm, RecipeFormStep1, \
+        RecipeFormStep2, RecipeFormStep3, IngredientRecipeFormset, CommentRecipeForm
 from .validators import validate_token
 
 # Create your views here.
+
+
+FORMS_RECIPE = [
+    ('step1', RecipeFormStep1),
+    ('step2', RecipeFormStep2),
+    ('step3', RecipeFormStep3),
+    ('step4', IngredientRecipeFormset)
+]
+
+TEMPLATES_RECIPE = {
+    'step1': 'food_app/recipe_form_step1.html',
+    'step2': 'food_app/recipe_form_step2.html',
+    'step3': 'food_app/recipe_form_step3.html',
+    'step4': 'food_app/recipe_formset.html',
+}
 
 
 class TestMixin(UserPassesTestMixin):
@@ -31,9 +55,15 @@ class IndexView(View):
     """
     def get(self, request, *args, **kwargs):
 
+        recipe_list = Recipe.objects.annotate(num_likes=Count('likes')).order_by('-num_likes')[:3]
+        context = {}
+        if recipe_list.count() == 3:
+            context['recipe_list'] = recipe_list
+        
         return render (
             request=request,
             template_name='food_app/index.html',
+            context=context
         )
 
 
@@ -297,6 +327,226 @@ class UserIngredientView(LoginRequiredMixin, ListView):
         return context
 
 
+class UserRecipeView(LoginRequiredMixin, ListView):
+
+    """
+    Return the list all recipes create by user
+    """
+    model = Recipe
+    template_name = 'food_app/user_recipe.html'
+    context_object_name = 'recipe_list'
+    paginate_by = 5
+
+    def get_queryset(self, *args, **kwargs):
+
+        recipe_list = self.request.user.recipes.all()
+        self.form = SearchForm(self.request.GET)
+        self.search_count = ''
+
+        if self.form.is_valid():
+
+            if self.form.changed_data:
+                recipe_list = recipe_list.filter(name__icontains=self.form.cleaned_data['name'])
+                self.search_count = recipe_list.count()
+             
+        return recipe_list
+        
+    def get_context_data(self, *args, **kwargs):
+        
+        context = super().get_context_data(*args, **kwargs)
+        
+        context['form'] = self.form
+        context['search_count'] = self.search_count
+        
+        if self.search_count:
+            context['path_pagination'] = self.request.get_full_path().split('&page=')[0] + '&page='
+        
+        else:
+            context['path_pagination'] = self.request.get_full_path().split('?')[0] + '?page='
+        
+        return context
+
+
+class UserLikeView(LoginRequiredMixin, ListView):
+
+    """
+    Return the list all recipes like by user
+    """
+    model = Recipe
+    template_name = 'food_app/user_like.html'
+    context_object_name = 'recipe_list'
+    paginate_by = 5
+
+    def get_queryset(self, *args, **kwargs):
+
+        recipe_list = self.request.user.likes.all()
+        self.form = SearchForm(self.request.GET)
+        self.search_count = ''
+
+        if self.form.is_valid():
+
+            if self.form.changed_data:
+                recipe_list = recipe_list.filter(name__icontains=self.form.cleaned_data['name'])
+                self.search_count = recipe_list.count()
+             
+        return recipe_list
+
+    def post(self, *args, **kwargs):
+        
+        if self.request.POST.get('like'):
+            recipe = Recipe.objects.get(pk=self.request.POST.get('like'))
+            recipe.likes.remove(self.request.user)
+
+        return redirect(reverse_lazy('user-like') + '#user-like')
+
+    def get_context_data(self, *args, **kwargs):
+        
+        context = super().get_context_data(*args, **kwargs)
+        
+        context['form'] = self.form
+        context['search_count'] = self.search_count
+        
+        if self.search_count:
+            context['path_pagination'] = self.request.get_full_path().split('&page=')[0] + '&page='
+        
+        else:
+            context['path_pagination'] = self.request.get_full_path().split('?')[0] + '?page='
+        
+        return context
+
+
+class UserCommentView(LoginRequiredMixin, ListView):
+
+    """
+    Return the list all recipes comment by user
+    """
+    model = CommentRecipe
+    template_name = 'food_app/user_comment.html'
+    context_object_name = 'comment_list'
+    paginate_by = 5
+
+    def get_queryset(self, *args, **kwargs):
+
+        comment_list = self.request.user.user_comments.all()
+        self.form = SearchForm(self.request.GET)
+        self.search_count = ''
+
+        if self.form.is_valid():
+
+            if self.form.changed_data:
+                comment_list = comment_list.filter(recipe__in=Recipe.objects.filter(name__icontains=self.form.cleaned_data['name']))
+                self.search_count = comment_list.count()
+             
+        return comment_list
+
+    def post(self, *args, **kwargs):
+        
+        if self.request.POST.get('comment'):
+            comment_recipe = CommentRecipe.objects.get(pk=self.request.POST.get('comment'))
+            comment_recipe.delete()
+
+        return redirect(reverse_lazy('user-comment') + '#user-comment')
+
+    def get_context_data(self, *args, **kwargs):
+        
+        context = super().get_context_data(*args, **kwargs)
+        
+        context['form'] = self.form
+        context['search_count'] = self.search_count
+        
+        if self.search_count:
+            context['path_pagination'] = self.request.get_full_path().split('&page=')[0] + '&page='
+        
+        else:
+            context['path_pagination'] = self.request.get_full_path().split('?')[0] + '?page='
+        
+        return context
+
+
+class UserRecipesView(ListView):
+
+    """
+    Return the list all recipes create by user for non register user
+    """
+    model = Recipe
+    template_name = 'food_app/user_recipes.html'
+    context_object_name = 'recipe_list'
+    paginate_by = 5
+
+    def get_queryset(self, *args, **kwargs):
+
+        self.user = get_object_or_404(User, pk=self.kwargs['pk'])
+        recipe_list = self.user.recipes.all()
+        self.form = SearchForm(self.request.GET)
+        self.search_count = ''
+
+        if self.form.is_valid():
+
+            if self.form.changed_data:
+                recipe_list = recipe_list.filter(name__icontains=self.form.cleaned_data['name'])
+                self.search_count = recipe_list.count()
+             
+        return recipe_list
+        
+    def get_context_data(self, *args, **kwargs):
+        
+        context = super().get_context_data(*args, **kwargs)
+        
+        context['user'] = self.user
+        context['form'] = self.form
+        context['search_count'] = self.search_count
+        
+        if self.search_count:
+            context['path_pagination'] = self.request.get_full_path().split('&page=')[0] + '&page='
+        
+        else:
+            context['path_pagination'] = self.request.get_full_path().split('?')[0] + '?page='
+        
+        return context
+
+
+class UserCommentsView(ListView):
+
+    """
+    Return the list all comments create by user for non register user
+    """
+    model = Recipe
+    template_name = 'food_app/user_comments.html'
+    context_object_name = 'comment_list'
+    paginate_by = 5
+
+    def get_queryset(self, *args, **kwargs):
+
+        self.user = get_object_or_404(User, pk=self.kwargs['pk'])
+        comment_list = self.user.user_comments.all()
+        self.form = SearchForm(self.request.GET)
+        self.search_count = ''
+
+        if self.form.is_valid():
+
+            if self.form.changed_data:
+                comment_list = comment_list.filter(recipe__in=Recipe.objects.filter(name__icontains=self.form.cleaned_data['name']))
+                self.search_count = comment_list.count()
+             
+        return comment_list
+        
+    def get_context_data(self, *args, **kwargs):
+        
+        context = super().get_context_data(*args, **kwargs)
+        
+        context['user'] = self.user
+        context['form'] = self.form
+        context['search_count'] = self.search_count
+        
+        if self.search_count:
+            context['path_pagination'] = self.request.get_full_path().split('&page=')[0] + '&page='
+        
+        else:
+            context['path_pagination'] = self.request.get_full_path().split('?')[0] + '?page='
+        
+        return context
+
+
 class IngredientCreateView(LoginRequiredMixin, CreateView):
 
     """
@@ -308,7 +558,7 @@ class IngredientCreateView(LoginRequiredMixin, CreateView):
     
     def get_success_url(self, *args, **kwargs):
 
-        return reverse_lazy('user-panel')
+        return self.request.GET.get('next') or reverse_lazy('user-ingredient') + '#user-ingredient'
 
     def get_initial(self, *args, **kwargs):
 
@@ -362,3 +612,241 @@ class IngredientDeleteView(TestMixin, DeleteView):
             return super().form_invalid(form, *args, **kwargs)
         
         return super().form_valid(form, *args, **kwargs)
+
+
+class RecipeCreateView(LoginRequiredMixin, SessionWizardView):
+
+    """
+    Return the create recipe in four step view
+    """
+    instance = None
+    form_list = FORMS_RECIPE
+    file_storage = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, ''))
+
+    def get_form_instance(self, step, *args, **kwargs):
+        
+        if self.instance is None:
+            self.instance = Recipe()
+        
+        return self.instance
+
+    def get_template_names(self, *args, **kwargs):
+        
+        return [TEMPLATES_RECIPE[self.steps.current]]
+ 
+    def get_form(self, step=None, data=None, files=None):
+        
+        form = super().get_form(step, data, files)
+
+        if step is None:
+            step = self.steps.current
+        
+        if step == 'step2':
+            form.initial = {'create_by': self.request.user}
+
+        if step == 'step4':
+            ingredient_checked = self.get_cleaned_data_for_step('step1')['ingredients']
+            form.min_num = ingredient_checked.count()
+            form.initial = [{'ingredient': ingredient.pk} for ingredient in ingredient_checked]
+        
+        return form
+  
+    def done(self, form_list, *args, **kwargs):
+        
+        self.instance.save()
+        formset = form_list[3]
+        formset.instance = self.instance
+        formset.save()
+        
+        return redirect(reverse_lazy('user-panel') + '#user-recipe')
+
+
+class RecipeUpdateView(TestMixin, SessionWizardView):
+
+    """
+    Return the update recipe in four step view
+    """
+    instance = None
+    form_list = FORMS_RECIPE
+    file_storage = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, ''))
+
+    def test_func(self):
+
+        self.recipe = Recipe.objects.get(pk=self.kwargs['pk'])
+
+        return self.recipe.create_by == self.request.user
+
+    def get_form_instance(self, step, *args, **kwargs):
+
+        self.recipe = Recipe.objects.get(pk=self.kwargs['pk'])
+
+        if self.instance is None:
+            self.instance = self.recipe
+        
+        return self.instance
+
+    def get_template_names(self, *args, **kwargs):
+        
+        return [TEMPLATES_RECIPE[self.steps.current]]
+
+    def get_context_data(self, form, *args, **kwargs):
+        
+        context = super().get_context_data(form, *args, **kwargs)
+        context['recipe'] = self.recipe
+        context['next'] = self.request.GET.get('next') + '#user-recipe'
+    
+        return context
+
+    def get_form(self, step=None, data=None, files=None):
+        
+        form = super().get_form(step, data, files)
+
+        if step is None:
+            step = self.steps.current
+        
+        if step == 'step4':
+            
+            if data == None:
+                ingredient_checked = self.get_cleaned_data_for_step('step1')['ingredients']
+                ingredient_id = [ingredient.id for ingredient in ingredient_checked]
+                ingredient_initial = self.recipe.ingredients.all()
+                
+                if len(form.forms) > ingredient_initial.count():
+                    form.forms = form.forms[:ingredient_initial.count()]
+                
+                for ingredient_recipe_form in form.forms:
+                    if not ingredient_recipe_form.initial['ingredient'] in ingredient_id:
+                        ingredient_recipe_form.initial['DELETE'] = True
+            
+                for ingredient in ingredient_checked:
+                    
+                    if not ingredient in ingredient_initial:
+                        new_form = deepcopy(form.forms[0])
+                        new_form.initial = {
+                            'quantity': '',
+                            'ingredient': ingredient.pk,
+                            'recipe': self.recipe.pk,
+                            'id': ''
+                        }
+                        new_form.prefix = f'step4-{len(form.forms)}'
+                        form.forms.append(new_form)
+                
+                form.min_num = len(form.forms)
+                
+        return form
+  
+    def done(self, form_list, *args, **kwargs):
+        
+        self.instance.save()
+        formset = form_list[3]
+        formset.save()
+        
+        return redirect(self.request.GET.get('next') + '#user-recipe')
+
+
+class RecipeDeleteView(TestMixin, DeleteView):
+
+    """
+    Return the delete recipe view
+    """
+    def test_func(self):
+
+        return self.get_object().create_by == self.request.user
+
+    model = Recipe
+    template_name = 'food_app/recipe_delete.html'
+    context_object_name = 'recipe'
+
+    def get_success_url(self, *args, **kwargs):
+
+        return reverse_lazy('user-recipe') + '#user-recipe'
+
+
+class RecipeDetailView(DetailView):
+
+    """
+    Return the detail recipe view
+    """
+    model = Recipe
+    template_name = 'food_app/recipe_detail.html'
+    context_object_name = 'recipe'
+
+    def post(self, *args, **kwargs):
+        
+        if self.request.POST.get('button_recipe'):
+            button_recipe = self.request.POST.get('button_recipe')
+            
+            if button_recipe == 'like_up':
+                self.get_object().likes.add(self.request.user)
+
+            elif button_recipe == 'like_down':
+                self.get_object().likes.remove(self.request.user)
+
+            elif button_recipe == 'comment':
+                form = CommentRecipeForm(self.request.POST)
+                
+                if form.is_valid():
+                    form.save()
+
+        return redirect(reverse_lazy('recipe-detail', args=[self.get_object().pk,]))
+        
+    def get_context_data(self, *args, **kwargs):
+        
+        context = super().get_context_data(*args, **kwargs)
+        
+        comments = self.get_object().recipe_comments.all()
+        paginator = Paginator(comments, 5)
+        page = self.request.GET.get('page')
+        comment_list = paginator.get_page(page)
+        
+        context['comment_list'] = comment_list
+        context['likes_count'] = self.get_object().likes.count()
+        
+        if self.request.user.is_authenticated:
+            form = CommentRecipeForm()
+            form.initial['user'] = self.request.user
+            form.initial['recipe'] = self.get_object()
+            context['form'] = form
+            context['user_like'] = self.get_object().likes.filter(pk=self.request.user.pk).exists()
+        
+        return context
+
+
+class RecipeListView(ListView):
+
+    """
+    Return the list all recipe view
+    """
+    model = Recipe
+    template_name = 'food_app/recipe_list.html'
+    context_object_name = 'recipe_list'
+    paginate_by = 15
+
+    def get_queryset(self, *args, **kwargs):
+
+        recipe_list = Recipe.objects.all()
+        self.form = SearchForm(self.request.GET)
+        self.search_count = ''
+
+        if self.form.is_valid():
+
+            if self.form.changed_data:
+                recipe_list = recipe_list.filter(name__icontains=self.form.cleaned_data['name'])
+                self.search_count = recipe_list.count()
+             
+        return recipe_list
+        
+    def get_context_data(self, *args, **kwargs):
+        
+        context = super().get_context_data(*args, **kwargs)
+        
+        context['form'] = self.form
+        context['search_count'] = self.search_count
+        
+        if self.search_count:
+            context['path_pagination'] = self.request.get_full_path().split('&page=')[0] + '&page='
+        
+        else:
+            context['path_pagination'] = self.request.get_full_path().split('?')[0] + '?page='
+        
+        return context

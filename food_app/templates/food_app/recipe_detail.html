@@ -1,0 +1,136 @@
+{% extends 'food_app/main.html' %}
+{% block content_main %}
+<div class="container-card-style">
+    <div class="row row-header-style">
+        <div class="col">
+            <h5 class="text-uppercase">Przepis</h5>
+            <ul class="list-none-style">
+                <li>Nazwa: <b>{{ recipe }}</b></li>
+                <li>Ilość kalorii: <b>{% if recipe.calories %} {{ recipe.calories }} {% else %} ----- {% endif %} kcal</b></li>
+                <li>Czas przygotowania: <b>{{ recipe.preparation_time }}</b></li>
+                <li>Polubienia: <b>{{ likes_count }}</b>
+                    {% if request.user.is_authenticated %}
+                        <form class="form-like-style" action="{% url 'recipe-detail' pk=recipe.pk %}" method="POST">
+                            {% csrf_token %}
+                            {% if user_like %}
+                                <button type="submit" name="button_recipe" value="like_down" title="Usuń głos">
+                                    <i class="fa fa-thumbs-down"></i>
+                                </button>
+                            {% else %}
+                                <button type="submit" name="button_recipe" value="like_up" title="Oddaj głos">
+                                    <i class="fa fa-thumbs-up"></i>
+                                </button>
+                            {% endif %}
+                        </form>
+                    {% else %}
+                        <i class="fa fa-thumbs-up"></i>
+                    {% endif %}
+                </li>
+                <li>Data dodania: <b>{{ recipe.create_date|date:'j E Y' }}</b></li>
+                {% if recipe.create_by %}
+                    <li>Stworzył: <a href="{% url 'user-recipes' pk=recipe.create_by.pk %}#user-recipes">{{ recipe.create_by }}</a></li>
+                {% endif %}
+            </ul>    
+        </div>
+        <div class="col d-flex justify-content-end">
+            <img src="{{ recipe.image.url }}" class="panel-avatar-style" alt="Zdjęcie">
+        </div>
+    </div>
+    {% if recipe.description %}
+        <div class="row row-card-style">
+            <div class="col-12">
+                <h5>Opis przepisu</h5>
+                <p class="text-style">{{ recipe.description }}</p>
+            </div>
+        </div>
+    {% endif %}
+    <div class="row row-card-style">
+        <div class="col-12">
+            <h5>Sposób przygotowania</h5>
+            <p class="text-style">{{ recipe.preparing }}</p>
+        </div>
+    </div>
+    {% if recipe.ingredients.all %}
+        <div class="row row-card-style">
+            <div class="col-12">
+                <h5>Potrzebne składniki</h5>
+                <ul>
+                    {% for ingredient in recipe.recipe_ingredients.all %}
+                    <li>{{ ingredient.ingredient }}, {{ ingredient.quantity }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    {% endif %}
+    {% if comment_list or form %}
+        <div class="row row-card-style" id="recipe-comments">
+            <div class="col-12">
+                <h5>Komentarze
+                    {% if comment_list.paginator %}
+                        <span class="pagination-style">
+                            {% if comment_list.has_previous %}
+                                <a href="?page={{ comment_list.previous_page_number }}#recipe-comments">&laquo;</a>
+                            {% endif %}
+                            {% if comment_list.paginator.num_pages <= 1 %}
+                                {{ pass }}
+                            {% else %}
+                                {% for i in comment_list.paginator.page_range %}
+                                    {% if comment_list.number == i %}
+                                        {{ i }}
+                                    {% elif i > comment_list.number|add:'-4' and i < comment_list.number|add:'4' %}
+                                        <a href="?page={{ i }}#recipe-comments">{{ i }}</a>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                            {% if comment_list.has_next %}
+                                <a href="?page={{ comment_list.next_page_number }}#recipe-comments">&raquo;</a>
+                            {% endif %}
+                        </span>
+                    {% endif %}
+                </h5>
+                <table class="table table-comment-style">  
+                    {% if form %}
+                        <tr>
+                            <td class="col-1 text-center">
+                                <img src="{{ request.user.avatar.url }}" alt="Avatar">
+                            </td>
+                            <td class="col-11">
+                                <form class="form-comment-style" action="{% url 'recipe-detail' pk=recipe.pk %}#recipe-comments" method="POST">
+                                    <div class="row">
+                                        <div class="col-11 d-flex">
+                                            {{ form.comment.label }}
+                                            {% csrf_token %}
+                                            {{ form.user }}
+                                            {{ form.recipe }}
+                                        </div>
+                                        <div class="col-1 d-flex justify-content-end">
+                                            <button type="submit" name="button_recipe" value="comment" title="Dodaj komentarz">
+                                                <i class="far fa-plus-square"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        {{ form.comment }}
+                                        {{ form.comment.errors }}
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endif %}
+                    {% for comment in comment_list %}
+                    <tr>
+                        <td class="col-1 text-center">
+                            <img src="{{ comment.user.avatar.url }}" alt="Avatar">
+                        </td>
+                        <td class="col-11">
+                            <div><a href="{% url 'user-comments' pk=recipe.create_by.pk %}#user-comments">{{ comment.user }}</a><span class="text-gray-style">, {{ comment.date_added|date:"j E Y, H:i"}}</span></div>
+                            <div class="text-comment-style">{{ comment.comment }}</div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock content_main %}

@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 import os
 
 from pathlib import Path
+from django.urls import reverse_lazy
 
 from .local_settings import *
 
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
     'food_app',
     'django_resized',
     'django_cleanup.apps.CleanupConfig',
+    'formtools',
 ]
 
 MIDDLEWARE = [
@@ -131,3 +133,5 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'food_app/media/')
 
 MEDIA_URL = 'media/'
+
+LOGIN_URL = reverse_lazy('user-login')

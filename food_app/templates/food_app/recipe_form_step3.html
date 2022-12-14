@@ -1,0 +1,39 @@
+{% extends 'food_app/main.html' %}
+{% block content_main %}
+<div class="container-card-style">
+    <form class="form-style" action="" method="POST">
+        {% csrf_token %}
+        {{ wizard.management_form }}
+        <div class="row row-header-style">
+            <div class="col-8 d-flex">
+                <h5 class="text-uppercase">
+                    {% if recipe %}
+                        Edytuj przepis
+                    {% else %}
+                        Dodaj przepis
+                    {% endif %}
+                </h5>
+            </div>
+            <div class="col-4 d-flex justify-content-end">
+                <a href="{{ next }}" class="btn button-style">Anuluj</a>
+                {% if wizard.steps.prev %}
+                    <button type="submit" name="wizard_goto_step" value="{{ wizard.steps.prev }}" class="btn button-style">Wstecz</button>
+                {% endif %}
+                <button type="submit" class="button-style">Dalej</button>
+            </div>
+        </div>
+        <div class="row row-card-style">
+            <div class="col-12">
+                <h5>Przygotowanie - krok {{ wizard.steps.step1 }} / {{ wizard.steps.count }}</h5>
+            </div>
+        </div>
+        <div class="row row-form-style">
+            <div class="col-2 label-style">{{ form.preparing.label }}</div>
+            <div class="col-10">
+                {{ form.preparing }}
+                {{ form.preparing.errors }}
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock content_main %}

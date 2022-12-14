@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth import authenticate
 from django.core.exceptions import ValidationError
 
-from .models import User, Ingredient
+from .models import User, Ingredient, Recipe, IngredientRecipe, CommentRecipe
 from .validators import validate_password
 
 
@@ -176,3 +176,69 @@ class IngredientForm(forms.ModelForm):
             'create_by': forms.HiddenInput(),
         }
 
+
+class RecipeFormStep1(forms.ModelForm):
+
+    class Meta:
+        model = Recipe
+        fields = ['ingredients',]
+        widgets = {
+            'ingredients': forms.CheckboxSelectMultiple(attrs={'class': "checkbox-style"}),
+        }
+
+
+class RecipeFormStep2(forms.ModelForm):
+
+    class Meta:
+        model = Recipe
+        fields = ['name', 'description', 'preparation_time', 'calories', 'image', 'create_by']
+        widgets = {
+            'description': forms.Textarea(attrs={'rows':'5', 'maxlength': '512',}),
+            'preparation_time': DurationInput(attrs={'step': '1'}),
+            'create_by': forms.HiddenInput(),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['image'].required = False
+    
+
+class RecipeFormStep3(forms.ModelForm):
+
+    class Meta:
+        model = Recipe
+        fields = ['preparing']
+        widgets = {
+            'preparing': forms.Textarea(attrs={'rows':'15',}),
+        }
+
+
+class IngredientRecipeForm(forms.ModelForm):
+
+    class Meta:
+        model = IngredientRecipe
+        fields = ['ingredient', 'quantity']
+
+
+IngredientRecipeFormset = forms.inlineformset_factory(
+    parent_model=Recipe,
+    model=IngredientRecipe,
+    form=IngredientRecipeForm,
+    extra=0,
+    can_delete=True
+)
+
+
+class CommentRecipeForm(forms.ModelForm):
+
+    class Meta:
+        model = CommentRecipe
+        fields = ['user', 'recipe', 'comment']
+        labels = {
+            'comment': 'Dodaj komentarz:',
+        }
+        widgets = {
+            'user': forms.HiddenInput(),
+            'recipe': forms.HiddenInput(),
+            'comment': forms.Textarea(attrs={'rows':'4', 'maxlength': '512'}),
+        }

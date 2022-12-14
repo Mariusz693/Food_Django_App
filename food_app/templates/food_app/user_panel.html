@@ -38,7 +38,7 @@
         <div class="col">
             <div class="user-menu-style">
                 <div>
-                    <a href="">
+                    <a href="{% url 'recipe-create' %}">
                         <i class="far fa-plus-square"></i>
                         <span>Dodaj przepis</span>
                     </a>
@@ -60,7 +60,7 @@
         <div class="col d-flex justify-content-end">
             <div class="user-alert-style">
                 <div>
-                    <a href="#user-recipe">
+                    <a href="{% url 'user-recipe' %}#user-recipe">
                         <span>Przepisy: {{ user.recipes.count }}</span>
                         <i class="fa fa-arrow-circle-down"></i>
                     </a>
@@ -72,13 +72,13 @@
                     </a>
                 </div>
                 <div>
-                    <a href="#user-vote">
-                        <span>Głosy: {{ user.votes.count }}</span>
+                    <a href="{% url 'user-like' %}#user-like">
+                        <span>Głosy: {{ user.likes.count }}</span>
                         <i class="fa fa-arrow-circle-down"></i>
                     </a>
                 </div>
                 <div>
-                    <a href="#user-comment">
+                    <a href="{% url 'user-comment' %}#user-comment">
                         <span>Komentarze: {{ user.comments.count }}</span>
                         <i class="fa fa-arrow-circle-down"></i>
                     </a>
@@ -93,7 +93,7 @@
         </div>
     </div>
     <!-- //--------------------------- page content -------------------------// -->
-    {% block content_user_main %}{% endblock content_user_main %}
+    {% block content_user_panel %}{% endblock content_user_panel %}
     <!-- //--------------------------- page content end ---------------------// -->
 </div>
-{% endblock %}
+{% endblock content_main %}

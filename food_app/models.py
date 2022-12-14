@@ -97,3 +97,107 @@ class Ingredient(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Recipe(models.Model):
+    
+    class Meta:
+        verbose_name = 'Przepis'
+        verbose_name_plural = 'Przepisy'
+        ordering = ['name']
+    
+    name = models.CharField(verbose_name='Nazwa przepisu', max_length=128)
+    description = models.TextField(verbose_name='Opis przepisu', null=True, blank=True)
+    preparing = models.TextField(verbose_name='Sposób przygotowania')
+    create_date = models.DateTimeField(verbose_name='Data dodania', auto_now_add=True)
+    preparation_time = models.DurationField(verbose_name='Czas przygotowania')
+    calories = models.PositiveSmallIntegerField(verbose_name='Ilość kalorii', null=True, blank=True)
+    create_by = models.ForeignKey(
+        'User',
+        related_name='recipes',
+        verbose_name='Stworzył',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+        )
+    ingredients = models.ManyToManyField(
+        'Ingredient',
+        related_name='recipes',
+        verbose_name='Składniki',
+        through='IngredientRecipe',
+        )
+    comments = models.ManyToManyField(
+        'User',
+        related_name='comments',
+        verbose_name='Komentarze',
+        through='CommentRecipe',
+        )
+    likes = models.ManyToManyField(
+        'User',
+        related_name='likes',
+        verbose_name='Głosy',
+        )
+    image = ResizedImageField(
+        size=[342, 256],
+        crop=['middle', 'center'],
+        force_format='PNG',
+        upload_to=image_upload_handler,
+        default='food_app/default_recipe.png',
+        verbose_name='Zdjęcie'
+        )
+    
+    def __str__(self):
+        return self.name
+    
+
+class IngredientRecipe(models.Model):
+
+    class Meta:
+        verbose_name = 'Składnik przepisu'
+        verbose_name_plural = 'Składnik przepisu'
+        unique_together = ['ingredient', 'recipe']
+        ordering = ['ingredient', 'recipe']
+
+    quantity = models.CharField(verbose_name='Ilość', max_length=64)
+    ingredient = models.ForeignKey(
+        'Ingredient',
+        related_name='ingredient_recipes',
+        verbose_name='Składnik',
+        on_delete=models.RESTRICT
+        )
+    recipe = models.ForeignKey(
+        'Recipe',
+        related_name='recipe_ingredients',
+        verbose_name='Przepis',
+        on_delete=models.CASCADE
+        )
+    
+    def unique_error_message(self, model_class, unique_check):
+
+        if unique_check == ('ingredient', 'recipe'):
+            return 'Składnik już dodany do przepisu'
+
+        return super().unique_error_message(model_class, unique_check)
+
+
+class CommentRecipe(models.Model):
+
+    class Meta:
+        verbose_name = 'Komentarz przepisu'
+        verbose_name_plural = 'Komentarz przepisu'
+        ordering = ['-date_added']
+
+    comment = models.TextField(verbose_name='Komentarz')
+    date_added = models.DateTimeField(verbose_name='Data wpisu', auto_now_add=True)
+    recipe = models.ForeignKey(
+        'Recipe',
+        related_name='recipe_comments',
+        verbose_name='Przepis',
+        on_delete=models.CASCADE
+        )
+    user = models.ForeignKey(
+        'User',
+        related_name='user_comments',
+        verbose_name='Użytkownik',
+        on_delete=models.CASCADE
+        )

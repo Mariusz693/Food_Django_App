@@ -49,8 +49,13 @@ a {
     color: var(--white-color);
 }
 
-.footer-style a {
-    color: var(--green-color);
+.footer-style a,
+.row-index-style a,
+.list-none-style a,
+.pagination-style a,
+.table-style a, 
+.table-comment-style a {
+    color: var(--green-color)!important;
     font-weight: bold;
 }
 
@@ -97,6 +102,9 @@ a {
  
 .container-body-style {
     justify-content: center;
+    margin: 0px;
+    padding-top: 12.5px;
+    padding-bottom: 12.5px;
 }
 
 .row-index-style {
@@ -104,11 +112,6 @@ a {
     margin-top: 20px;
     margin-bottom: 20px;
     font-size: 1.1rem;
-}
-
-.row-index-style a {
-    font-weight: bold;
-    color: var(--green-color);
 }
 
 .img-index-style {
@@ -182,6 +185,7 @@ a {
 }
 
 .row-card-style h5 {
+    margin-top: 7.5px;
     font-weight: bold;
 }
 
@@ -199,13 +203,18 @@ a {
     height: 38px;
 }
 
-.form-style input {
+.form-style input,
+.form-style textarea {
     background: transparent;
     width: 100%;
     padding: 5px;
     border: none;
     outline: none;
     border-bottom: 1.5px solid var(--gray-color);
+}
+
+.form-style input[type=time] {
+    border: none!important;
 }
 
 .form-style input[type=file] {
@@ -262,8 +271,8 @@ a {
 
 .user-menu-style div {
     width: 80px;
-    height: 120px;
     text-align: center;
+    margin-bottom: 10px;
     margin-right: 20px;
 }
 
@@ -320,10 +329,6 @@ a {
     color: var(--gray-lighter-color);
 }
 
-.pagination-style a {
-    color: var(--green-color)!important;
-}
-
 .search-form-style {
     margin-top: -5px;
 }
@@ -344,6 +349,150 @@ a {
     vertical-align: middle;
 }
 
-.table-style a {
+.table-style img {
+    height: 64px;
+    border: 2px solid var(--gray-color);
+}
+
+.table-style ul {
+    list-style: none;
+    margin-bottom: 0px;
+    margin-left: -25px;
+    margin-right: 25px;
+}
+
+.checkbox-style div {
+    float: left;
+    width: 33%;
+    padding-top: 5px;
+}
+
+.checkbox-style input {
+    display: inline-block;
+    width: auto;
+}
+
+.select-hidden-style select {
+    background: transparent;
+    border: none;
+    outline: none;
+    width: 100%;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding: 5px;
+}
+
+.select-hidden-style select:read-only * {
+    display: none;
+}
+
+.form-like-style {
+    display: inline-block;
+}
+
+.form-like-style button {
+    background-color: transparent;
+    border: none;
+    margin: 0px 10px;
+}
+
+.form-like-style button .fa-thumbs-up {
     color: var(--green-color);
+}
+
+.form-like-style button .fa-thumbs-down {
+    color: var(--red-color);
+}
+
+.text-style {
+    text-indent: 30px;
+    text-align: justify;
+}
+
+.table-comment-style img {
+    height: 96px;
+    border: 2px solid var(--gray-color);
+    margin: 5px;
+    justify-self: center;
+}
+
+.table-comment-style p {
+    margin: 0px;
+    margin-left: 5px;
+    text-align: justify;
+}
+
+.form-comment-style textarea {
+    background: transparent;
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 0.9rem;
+    display: block;
+}
+
+.form-comment-style button {
+    background-color: transparent;
+    border: none;
+    margin: 0px 10px;
+    color: var(--green-color);
+}
+
+.text-gray-style {
+    color: var(--gray-lighter-color);
+}
+
+.text-comment-style {
+    font-size: 0.9rem;
+    text-align: justify;
+}
+
+.display-none {
+    display: none;
+}
+
+.carousel-item-style {
+    text-align: center;
+}
+
+.carousel-item-style img {
+    border: 3px solid var(--gray-color);
+    margin: 20px;
+    border-radius: 6px;
+    height: 256px;
+}
+
+.carousel-item-style p {
+    margin: 5px;
+}
+
+.carousel-button-style {
+    font-size: 3.0rem;
+    position: absolute;
+    top: 30%;
+}
+
+.carousel-button-style i {
+    color: var(--gray-dark-color)!important;
+}
+
+.carousel-button-prev-style {
+    right: 50%;
+    padding-right: 200px;
+}
+
+.carousel-button-next-style {
+    left: 50%;
+    padding-left: 200px;
+}
+
+.carousel-indicators-style {
+    margin-bottom: -25px;
+}
+
+.carousel-indicators-style li {
+    background-color: var(--gray-dark-color);
+    height: 5px;
+    width: 10%;
 }

@@ -18,7 +18,7 @@
                     <a href="{% url 'index' %}" class="navbar-brand logo-style">Zaplanuj <span>Jedzonko</span></a>
                 </div>
                 <div class="col d-flex justify-content-end">
-                    <a href="" class="nav-link nav-link-style">Menu</a>
+                    <a href="{% url 'recipe-list' %}" class="nav-link nav-link-style">Menu</a>
                     <a href="{% url 'index' %}#about" class="nav-link nav-link-style">Info</a>
                     <a href="{% url 'index' %}#contact" class="nav-link nav-link-style">Kontakt</a>
                     {% if request.user.is_authenticated %}

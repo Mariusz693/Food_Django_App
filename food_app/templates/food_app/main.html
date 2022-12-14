@@ -5,7 +5,7 @@
         <div class="wrapper-style">
             <div class="sidebar-style">
                 <ul>
-                    <li><a href="">Przepisy</a></li>
+                    <li><a href="{% url 'recipe-list' %}">Przepisy</a></li>
                     <li><a href="#">Plany</a></li>
                 </ul>
                 {% if request.user.is_authenticated %}
@@ -30,4 +30,4 @@
         </div>
     </div>
 </div>
-{% endblock %}
+{% endblock content %}

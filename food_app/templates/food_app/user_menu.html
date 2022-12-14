@@ -1,0 +1,42 @@
+{% extends 'food_app/main.html' %}
+{% block content_main %}
+<div class="container-card-style">
+    <div class="row row-header-style">
+        <div class="col">
+            <h5 class="text-uppercase">Użytkownik</h5>
+            <ul class="list-none-style">
+                <li>Nazwa użytkownika: <b>{{ user }}</b></li>
+                <li>Przepisy: <b>{{ user.recipes.count }}</b></li>
+                <li>Plany: <b></b></li>
+                <li>Komentarze: <b>{{ user.user_comments.count }}</b></li>
+            </ul>
+            <div class="user-menu-style">
+                <div>
+                    <a href="{% url 'user-recipes' pk=user.pk %}#user-recipes">
+                        <i class="far fa-edit"></i>
+                        <span>Przepisy</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="">
+                        <i class="far fa-calendar-alt"></i>
+                        <span>Plany</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="{% url 'user-comments' pk=user.pk %}#user-comments">
+                        <i class="far fa-comments"></i>
+                        <span>Komentarze</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col d-flex justify-content-end">
+            <img src="{{ user.avatar.url }}" class="panel-avatar-style" alt="Awatar">
+        </div>
+    </div>
+    <!-- //--------------------------- page content -------------------------// -->
+    {% block content_user_menu %}{% endblock content_user_menu %}
+    <!-- //--------------------------- page content end ---------------------// -->
+</div>
+{% endblock content_main %}

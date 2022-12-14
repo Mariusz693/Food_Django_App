@@ -5,7 +5,7 @@
         {% csrf_token %}
         <div class="row row-header-style">
             <div class="col d-flex">
-                <h5 class="text-uppercase">Usuń profil</h5>
+                <h5 class="text-uppercase">Usuń przepis</h5>
             </div>
             <div class="col d-flex justify-content-end">
                 <button type="button" onclick="history.back()" class="button-style">Anuluj</button>
@@ -16,11 +16,11 @@
             <div class="col-lg-4 col-md-3 col-sm-2"></div>
             <div class="col-lg-4 col-md-6 col-sm-8">
                 <p class="text-center">
-                    <strong>Potwierdź usunięcie swojego profilu</strong>
+                    <strong>Potwierdź usunięcie przepisu - {{ recipe }}</strong>
                 </p>
             </div>
             <div class="col-lg-4 col-md-3 col-sm-2"></div>
         </div>
     </form>
 </div>
-{% endblock content_main %}
+{% endblock %}

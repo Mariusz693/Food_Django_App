@@ -1,0 +1,71 @@
+{% extends 'food_app/user_panel.html' %}
+{% block content_user_panel %}
+    <div class="row row-card-style" id="user-comment">
+        <div class="col-lg-9 col-md-8 col-sm-7 d-flex">
+            <h5>
+                {% if search_count or search_count == 0 %}
+                    Znaleziono ({{ search_count }})
+                {% else %}
+                    Twoje Komentarze
+                {% endif %}
+                {% if is_paginated %}
+                    <span class="pagination-style">
+                        {% if page_obj.number > 1 %}
+                            <a href="{{ path_pagination }}{{ page_obj.number|add:'-1' }}#user-comment">&laquo;</a>
+                        {% endif %}
+                        {% if page_obj.paginator.num_pages <= 1 %}
+                            {{ pass }}
+                        {% else %}
+                            {% for i in page_obj.paginator.page_range %}
+                                {% if page_obj.number == i %}
+                                    {{ i }}
+                                {% elif i > page_obj.number|add:'-4' and i < page_obj.number|add:'4' %}
+                                    <a href="{{ path_pagination }}{{ i }}#user-comment">{{ i }}</a>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                        {% if page_obj.paginator.num_pages > page_obj.number %}
+                            <a href="{{ path_pagination }}{{ page_obj.number|add:'1' }}#user-comment">&raquo;</a>
+                        {% endif %}
+                    </span>
+                {% endif %}
+            </h5>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-5 d-flex justify-content-end">
+            <form action="{% url 'user-comment' %}#user-comment" method="GET" class="form-style search-form-style">
+                {{ form.name }}
+                <button type="submit" title="Szukaj"><i class="fa fa-search"></i></button>
+            </form>
+        </div>
+    </div>
+    <div class="row row-card-style">
+        <div class="col">
+            <table class="table table-comment-style">
+                <tbody>
+                    {% for comment in comment_list %}
+                        <tr>
+                            <td class="col-1"><img src="{{ comment.recipe.image.url }}"></td>    
+                            <td class="col-11">
+                                <div class="row">
+                                    <div class="col-11 d-flex">
+                                        <a href="{% url 'recipe-detail' pk=comment.recipe.pk %}" title="Szczegóły">{{ comment.recipe }}</a>
+                                        <span class="text-gray-style">, {{ comment.date_added|date:"j E Y, H:i"}}</span>
+                                    </div>
+                                    <div class="col-1 d-flex justify-content-end">
+                                        <form class="form-comment-style" action="{% url 'user-comment' %}#user-comment" method="POST">
+                                            {% csrf_token %}
+                                            <button class="text-danger" type="submit" name="comment" value="{{ comment.pk }}" title="Usuń komentarz">
+                                                <i class="far fa-minus-square"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="text-comment-style">{{ comment.comment }}</div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock content_user_panel %}

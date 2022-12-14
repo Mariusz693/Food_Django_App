@@ -1,17 +1,17 @@
-{% extends 'food_app/user_panel.html' %}
-{% block content_user_panel %}
-    <div class="row row-card-style" id="user-ingredient">
+{% extends 'food_app/user_menu.html' %}
+{% block content_user_menu %}
+    <div class="row row-card-style" id="user-recipes">
         <div class="col-lg-9 col-md-8 col-sm-7 d-flex">
             <h5>
                 {% if search_count or search_count == 0 %}
                     Znaleziono ({{ search_count }})
                 {% else %}
-                    Twoje Składniki
+                    Przepisy
                 {% endif %}
                 {% if is_paginated %}
                     <span class="pagination-style">
                         {% if page_obj.number > 1 %}
-                            <a href="{{ path_pagination }}{{ page_obj.number|add:'-1' }}#user-ingredient">&laquo;</a>
+                            <a href="{{ path_pagination }}{{ page_obj.number|add:'-1' }}#user-recipes">&laquo;</a>
                         {% endif %}
                         {% if page_obj.paginator.num_pages <= 1 %}
                             {{ pass }}
@@ -20,19 +20,19 @@
                                 {% if page_obj.number == i %}
                                     {{ i }}
                                 {% elif i > page_obj.number|add:'-4' and i < page_obj.number|add:'4' %}
-                                    <a href="{{ path_pagination }}{{ i }}#user-ingredient">{{ i }}</a>
+                                    <a href="{{ path_pagination }}{{ i }}#user-recipes">{{ i }}</a>
                                 {% endif %}
                             {% endfor %}
                         {% endif %}
                         {% if page_obj.paginator.num_pages > page_obj.number %}
-                            <a href="{{ path_pagination }}{{ page_obj.number|add:'1' }}#user-ingredient">&raquo;</a>
+                            <a href="{{ path_pagination }}{{ page_obj.number|add:'1' }}#user-recipes">&raquo;</a>
                         {% endif %}
                     </span>
                 {% endif %}
             </h5>
         </div>
         <div class="col-lg-3 col-md-4 col-sm-5 d-flex justify-content-end">
-            <form action="{% url 'user-ingredient' %}#user-ingredient" method="GET" class="form-style search-form-style">
+            <form action="{% url 'user-recipes' pk=user.pk %}#user-recipes" method="GET" class="form-style search-form-style">
                 {{ form.name }}
                 <button type="submit" title="Szukaj"><i class="fa fa-search"></i></button>
             </form>
@@ -42,20 +42,17 @@
         <div class="col">
             <table class="table table-style">
                 <tbody>
-                    {% for ingredient in ingredient_list %}
+                    {% for recipe in recipe_list %}
                         <tr>
-                            <td class="col-10">
-                                <b>{{ ingredient.name }}</b>
-                            </td>
-                            <td class="col-1 text-center">
-                                <a href="{% url 'ingredient-update' pk=ingredient.pk %}?next={{ request.get_full_path }}" title="Edytuj">
-                                    <i class="far fa-edit"></i>
-                                </a>    
-                            </td>
-                            <td class="col-1 text-center">
-                                <a href="{% url 'ingredient-delete' pk=ingredient.pk %}" title="Usuń">
-                                    <i class="far fa-minus-square danger-style"></i>
-                                </a>    
+                            <td class="col-1"><img src="{{ recipe.image.url }}"></td>    
+                            <td class="col-11">
+                                <ul>
+                                    <li>
+                                        <a href="{% url 'recipe-detail' pk=recipe.pk %}" title="Szczegóły">{{ recipe.name }}</a>
+                                    </li>
+                                    <li>Ilość kalorii: {% if recipe.calories %} {{ recipe.calories }} {% else %} ----- {% endif %} kcal</li>
+                                    <li>Oddane głosy: {{ recipe.votes.count }}</li>
+                                </ul>
                             </td>
                         </tr>
                     {% endfor %}
@@ -63,4 +60,4 @@
             </table>
         </div>
     </div>
-{% endblock content_user_panel %}
+{% endblock content_user_menu %}
