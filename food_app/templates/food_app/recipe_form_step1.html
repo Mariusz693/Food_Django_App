@@ -15,10 +15,7 @@
                 </h5>
             </div>
             <div class="col-4 d-flex justify-content-end">
-                <a href="{{ next }}" class="btn button-style">Anuluj</a>
-                {% if wizard.steps.prev %}
-                    <button type="submit" name="wizard_goto_step" value="{{ wizard.steps.prev }}" class="btn button-style">Wstecz</button>
-                {% endif %}
+                <a href="{{ request.GET.next }}" class="btn button-style">Anuluj</a>
                 <button type="submit" class="button-style">Dalej</button>
             </div>
         </div>
@@ -27,7 +24,7 @@
                 <h5>Składniki - krok {{ wizard.steps.step1 }} / {{ wizard.steps.count }}</h5>
             </div>
             <div class="col-lg-3 col-md-4 col-sm-5 d-flex justify-content-end">
-                <a href="{% url 'ingredient-create' %}?next={% url 'recipe-create' %}"><button type="button" class="button-style">Dodaj składnik</button></a>
+                <a href="{% url 'ingredient-create' %}?next={{ request.get_full_path }}"><button type="button" class="button-style">Dodaj składnik</button></a>
             </div>
         </div>
         <div class="row row-form-style">

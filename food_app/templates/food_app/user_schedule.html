@@ -1,17 +1,17 @@
 {% extends 'food_app/user_panel.html' %}
 {% block content_user_panel %}
-    <div class="row row-card-style" id="user-recipe">
+    <div class="row row-card-style" id="user-schedule">
         <div class="col-lg-9 col-md-8 col-sm-7 d-flex">
             <h5>
                 {% if search_count or search_count == 0 %}
                     Znaleziono {{ search_count }}
                 {% else %}
-                    Twoje Przepisy
+                    Twoje Plany Żywienia
                 {% endif %}
                 {% if is_paginated %}
                     <span class="pagination-style">
                         {% if page_obj.number > 1 %}
-                            <a href="{{ path_pagination }}{{ page_obj.number|add:'-1' }}#user-recipe">&laquo;</a>
+                            <a href="{{ path_pagination }}{{ page_obj.number|add:'-1' }}#user-schedule">&laquo;</a>
                         {% endif %}
                         {% if page_obj.paginator.num_pages <= 1 %}
                             {{ pass }}
@@ -20,19 +20,19 @@
                                 {% if page_obj.number == i %}
                                     {{ i }}
                                 {% elif i > page_obj.number|add:'-4' and i < page_obj.number|add:'4' %}
-                                    <a href="{{ path_pagination }}{{ i }}#user-recipe">{{ i }}</a>
+                                    <a href="{{ path_pagination }}{{ i }}#user-schedule">{{ i }}</a>
                                 {% endif %}
                             {% endfor %}
                         {% endif %}
                         {% if page_obj.paginator.num_pages > page_obj.number %}
-                            <a href="{{ path_pagination }}{{ page_obj.number|add:'1' }}#user-recipe">&raquo;</a>
+                            <a href="{{ path_pagination }}{{ page_obj.number|add:'1' }}#user-schedule">&raquo;</a>
                         {% endif %}
                     </span>
                 {% endif %}
             </h5>
         </div>
         <div class="col-lg-3 col-md-4 col-sm-5 d-flex justify-content-end">
-            <form action="{% url 'user-recipe' %}#user-recipe" method="GET" class="form-style search-form-style">
+            <form action="{% url 'user-schedule' %}#user-schedule" method="GET" class="form-style search-form-style">
                 {{ form.name }}
                 <button type="submit" title="Szukaj"><i class="fa fa-search"></i></button>
             </form>
@@ -42,28 +42,26 @@
         <div class="col">
             <table class="table table-style">
                 <tbody>
-                    {% for recipe in recipe_list %}
+                    {% for schedule in schedule_list %}
                         <tr>
-                            <td class="col-1"><img src="{{ recipe.image.url }}"></td>    
-                            <td class="col-8">
+                            <td class="col-9">
                                 <ul>
                                     <li>
-                                        <a href="{% url 'recipe-detail' pk=recipe.pk %}" title="Szczegóły">{{ recipe.name }}</a>
+                                        <a href="{% url 'schedule-detail' pk=schedule.pk %}" title="Szczegóły">{{ schedule.name }}</a>
                                     </li>
-                                    <li>Przygotowanie: {{ recipe.preparation_time }}</li>
-                                    <li>Dodano: {{ recipe.create_date|date:'j E Y' }}</li>
+                                    <li>Dodano: {{ schedule.create_date|date:'j E Y' }}</li>
                                 </ul>
                             </td>
                             <td class="col-1 text-center">
-                                <i class="fa fa-thumbs-up"></i> {{ recipe.likes.count }}
+                                <i class="fa fa-thumbs-up"></i> {{ schedule.likes.count }}
                             </td>
                             <td class="col-1 text-center">
-                                <a href="{% url 'recipe-update' pk=recipe.pk %}?next={{ request.get_full_path }}" title="Edytuj">
+                                <a href="{% url 'schedule-update' pk=schedule.pk %}?next={{ request.get_full_path }}" title="Edytuj">
                                     <i class="far fa-edit"></i>
                                 </a>    
                             </td>
                             <td class="col-1 text-center danger-style">
-                                <a href="{% url 'recipe-delete' pk=recipe.pk %}?next={{ request.get_full_path }}" title="Usuń">
+                                <a href="{% url 'schedule-delete' pk=schedule.pk %}?next={{ request.get_full_path }}" title="Usuń">
                                     <i class="far fa-minus-square"></i>
                                 </a>    
                             </td>

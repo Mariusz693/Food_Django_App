@@ -4,7 +4,7 @@
         <div class="col-lg-9 col-md-8 col-sm-7 d-flex">
             <h5>
                 {% if search_count or search_count == 0 %}
-                    Znaleziono ({{ search_count }})
+                    Znaleziono {{ search_count }}
                 {% else %}
                     Twoje Komentarze
                 {% endif %}
@@ -52,7 +52,7 @@
                                         <span class="text-gray-style">, {{ comment.date_added|date:"j E Y, H:i"}}</span>
                                     </div>
                                     <div class="col-1 d-flex justify-content-end">
-                                        <form class="form-comment-style" action="{% url 'user-comment' %}#user-comment" method="POST">
+                                        <form class="form-comment-style" action="" method="POST">
                                             {% csrf_token %}
                                             <button class="text-danger" type="submit" name="comment" value="{{ comment.pk }}" title="Usuń komentarz">
                                                 <i class="far fa-minus-square"></i>

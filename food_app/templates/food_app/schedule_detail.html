@@ -1,0 +1,69 @@
+{% extends 'food_app/main.html' %}
+{% block content_main %}
+<div class="container-card-style">
+    <div class="row row-header-style">
+        <div class="col">
+            <h5 class="text-uppercase">Plan Żywienia</h5>
+            <ul class="list-none-style">
+                <li>Nazwa: <b>{{ schedule }}</b></li>
+                <li>Polubienia: <i class="fa fa-thumbs-up"></i> <b>{{ schedule.likes.count }}</b>
+                    {% if request.user.is_authenticated %}
+                        <form class="form-like-style" action="" method="POST">
+                            {% csrf_token %}
+                            {% if user_like %}
+                                <button type="submit" name="button_schedule" value="like_down" title="Usuń głos">
+                                    <i class="fa fa-thumbs-down"></i>
+                                </button>
+                            {% else %}
+                                <button type="submit" name="button_schedule" value="like_up" title="Oddaj głos">
+                                    <i class="fa fa-thumbs-up"></i>
+                                </button>
+                            {% endif %}
+                        </form>
+                    {% else %}
+                        <i class="fa fa-thumbs-up"></i>
+                    {% endif %}
+                </li>
+                <li>Dodano: <b>{{ schedule.create_date|date:'j E Y' }}</b></li>
+                {% if schedule.create_by %}
+                    <li>Stworzył: <a href="{% url 'user-schedules' pk=schedule.create_by.pk %}">{{ schedule.create_by }}</a></li>
+                {% endif %}
+            </ul>    
+        </div>
+    </div>
+    <div class="row row-card-style">
+        <div class="col-12">
+            <h5>Opis planu żywienia</h5>
+            <p class="text-style">{{ schedule.description }}</p>
+        </div>
+    </div>
+    <div class="row row-card-style">
+        <div class="col-12">
+            <h5>Harmonogram żywienia</h5>
+            {% for item in schedule.schedule_recipes.all %}
+                {% if forloop.counter0|divisibleby:5 != 0 %}
+                    <div class="row row-card-style">
+                        <div class="col">
+                            <b>{{ item.get_day_number_display }}</b>
+                        </div>
+                    </div>
+                {% endif %}
+                <div class="row row-card-style-2">
+                    <div class="col-lg-2 col-md-3 col-sm-4">
+                        {{ item.get_meal_number_display }}
+                    </div>
+                    <div class="col">
+                        {% if item.recipe %}
+                            <a href="{% url 'recipe-detail' pk=item.recipe.pk %}" title="Szczegóły">
+                                {{ item.recipe }}
+                            </a>
+                        {% else %}
+                            -----
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock content_main %}

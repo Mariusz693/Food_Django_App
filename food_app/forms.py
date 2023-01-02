@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth import authenticate
 from django.core.exceptions import ValidationError
 
-from .models import User, Ingredient, Recipe, IngredientRecipe, CommentRecipe
+from .models import User, Ingredient, Recipe, IngredientRecipe, CommentRecipe, Schedule, RecipeSchedule
 from .validators import validate_password
 
 
@@ -112,7 +112,7 @@ class UserPasswordUpdateForm(forms.ModelForm):
         password_repeat = self.cleaned_data['password_repeat']
         
         if not authenticate(username=self.instance.username, password=password):
-            self.add_error('password_old', 'Błędne hasło')
+            self.add_error('password', 'Błędne hasło')
     
         if password_new != password_repeat:
             self.add_error('password_repeat', 'Hasła róźnią się od siebie')
@@ -242,3 +242,35 @@ class CommentRecipeForm(forms.ModelForm):
             'recipe': forms.HiddenInput(),
             'comment': forms.Textarea(attrs={'rows':'4', 'maxlength': '512'}),
         }
+
+
+class ScheduleForm(forms.ModelForm):
+
+    class Meta:
+        model = Schedule
+        fields = ['name', 'description', 'create_by']
+        widgets = {
+            'description': forms.Textarea(attrs={'rows':'10', 'maxlength': '1024',}),
+            'create_by': forms.HiddenInput(),
+        }
+
+
+class RecipeScheduleForm(forms.ModelForm):
+
+    class Meta:
+        model = RecipeSchedule
+        fields = ['recipe', 'day_number', 'meal_number']
+        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['recipe'].empty_label = 'Wybierz przepis'
+
+
+RecipeScheduleFormset = forms.inlineformset_factory(
+    parent_model=Schedule,
+    model=RecipeSchedule,
+    form=RecipeScheduleForm,
+    min_num=35,
+    max_num=35,
+    can_delete=False 
+)

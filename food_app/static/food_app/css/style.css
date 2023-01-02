@@ -54,7 +54,8 @@ a {
 .list-none-style a,
 .pagination-style a,
 .table-style a, 
-.table-comment-style a {
+.table-comment-style a,
+.row-card-style-2 a {
     color: var(--green-color)!important;
     font-weight: bold;
 }
@@ -204,7 +205,8 @@ a {
 }
 
 .form-style input,
-.form-style textarea {
+.form-style textarea,
+.form-style select {
     background: transparent;
     width: 100%;
     padding: 5px;
@@ -383,6 +385,10 @@ a {
     padding: 5px;
 }
 
+.select-bold-style select {
+    font-weight: bold;
+}
+
 .select-hidden-style select:read-only * {
     display: none;
 }
@@ -495,4 +501,9 @@ a {
     background-color: var(--gray-dark-color);
     height: 5px;
     width: 10%;
+}
+
+.row-card-style-2 {
+    margin-top: 5px;
+    padding-left: 30px;
 }

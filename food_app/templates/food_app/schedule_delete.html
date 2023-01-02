@@ -5,27 +5,22 @@
         {% csrf_token %}
         <div class="row row-header-style">
             <div class="col d-flex">
-                <h5 class="text-uppercase">
-                    {% if ingredient %}
-                        Edytuj składnik
-                    {% else %}
-                        Dodaj składnik
-                    {% endif %}
-                </h5>
+                <h5 class="text-uppercase">Usuń plan</h5>
             </div>
             <div class="col d-flex justify-content-end">
                 <a href="{{ request.GET.next }}" class="btn button-style">Anuluj</a>
-                <button type="submit" class="button-style">Zapisz</button>
+                <button type="submit" class="button-style">Potwierdź</button>
             </div>
         </div>
         <div class="row row-form-style">
-            <div class="col-4 label-style">{{ form.name.label }}</div>
+            <div class="col-lg-4 col-md-3 col-sm-2"></div>
             <div class="col-lg-4 col-md-6 col-sm-8">
-                {{ form.name }}
-                {{ form.name.errors }}
-                {{ form.create_by }}
+                <p class="text-center">
+                    <strong>Potwierdź usunięcie planu żywnościowego - {{ schedule }}</strong>
+                </p>
             </div>
+            <div class="col-lg-4 col-md-3 col-sm-2"></div>
         </div>
     </form>
 </div>
-{% endblock content_main %}
+{% endblock %}

@@ -1,17 +1,18 @@
-{% extends 'food_app/user_menu.html' %}
-{% block content_user_menu %}
-    <div class="row row-card-style" id="user-recipes">
+{% extends 'food_app/main.html' %}
+{% block content_main %}
+<div class="container-card-style">
+    <div class="row row-header-style">
         <div class="col-lg-9 col-md-8 col-sm-7 d-flex">
-            <h5>
+            <h5 class="text-uppercase">
                 {% if search_count or search_count == 0 %}
                     Znaleziono {{ search_count }}
                 {% else %}
-                    Przepisy
+                    Plany Żywienia
                 {% endif %}
                 {% if is_paginated %}
                     <span class="pagination-style">
                         {% if page_obj.number > 1 %}
-                            <a href="{{ path_pagination }}{{ page_obj.number|add:'-1' }}#user-recipes">&laquo;</a>
+                            <a href="{{ path_pagination }}{{ page_obj.number|add:'-1' }}">&laquo;</a>
                         {% endif %}
                         {% if page_obj.paginator.num_pages <= 1 %}
                             {{ pass }}
@@ -20,19 +21,19 @@
                                 {% if page_obj.number == i %}
                                     {{ i }}
                                 {% elif i > page_obj.number|add:'-4' and i < page_obj.number|add:'4' %}
-                                    <a href="{{ path_pagination }}{{ i }}#user-recipes">{{ i }}</a>
+                                    <a href="{{ path_pagination }}{{ i }}">{{ i }}</a>
                                 {% endif %}
                             {% endfor %}
                         {% endif %}
                         {% if page_obj.paginator.num_pages > page_obj.number %}
-                            <a href="{{ path_pagination }}{{ page_obj.number|add:'1' }}#user-recipes">&raquo;</a>
+                            <a href="{{ path_pagination }}{{ page_obj.number|add:'1' }}">&raquo;</a>
                         {% endif %}
                     </span>
                 {% endif %}
             </h5>
         </div>
         <div class="col-lg-3 col-md-4 col-sm-5 d-flex justify-content-end">
-            <form action="{% url 'user-recipes' pk=user.pk %}#user-recipes" method="GET" class="form-style search-form-style">
+            <form action="{% url 'schedule-list' %}" method="GET" class="form-style search-form-style">
                 {{ form.name }}
                 <button type="submit" title="Szukaj"><i class="fa fa-search"></i></button>
             </form>
@@ -42,22 +43,18 @@
         <div class="col">
             <table class="table table-style">
                 <tbody>
-                    {% for recipe in recipe_list %}
+                    {% for schedule in schedule_list %}
                         <tr>
-                            <td class="col-1"><img src="{{ recipe.image.url }}"></td>    
-                            <td class="col-9">
+                            <td class="col-10">
                                 <ul>
                                     <li>
-                                        <a href="{% url 'recipe-detail' pk=recipe.pk %}" title="Szczegóły">
-                                            <b>{{ recipe.name }}</b>
-                                        </a>    
+                                        <a href="{% url 'schedule-detail' pk=schedule.pk %}" title="Szczegóły">{{ schedule.name }}</a>
                                     </li>
-                                    <li>Przygotowanie: {{ recipe.preparation_time }}</li>
-                                    <li>Dodano: {{ recipe.create_date|date:'j E Y' }}</li>
+                                    <li>Dodano: {{ schedule.create_date|date:'j E Y' }}</li>
                                 </ul>
                             </td>
                             <td class="col-2 text-center">
-                                <i class="fa fa-thumbs-up"></i> {{ recipe.likes.count }}
+                                <i class="fa fa-thumbs-up"></i> {{ schedule.likes.count }}
                             </td>
                         </tr>
                     {% endfor %}
@@ -65,4 +62,5 @@
             </table>
         </div>
     </div>
-{% endblock content_user_menu %}
+</div>
+{% endblock content_main %}

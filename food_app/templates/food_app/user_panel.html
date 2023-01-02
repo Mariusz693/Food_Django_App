@@ -38,19 +38,19 @@
         <div class="col">
             <div class="user-menu-style">
                 <div>
-                    <a href="{% url 'recipe-create' %}">
+                    <a href="{% url 'recipe-create' %}?next={% url 'user-recipe' %}">
                         <i class="far fa-plus-square"></i>
                         <span>Dodaj przepis</span>
                     </a>
                 </div>
                 <div>
-                    <a href="">
+                    <a href="{% url 'schedule-create' %}?next={% url 'user-schedule' %}">
                         <i class="far fa-plus-square"></i>
                         <span>Dodaj plan</span>
                     </a>
                 </div>
                 <div>
-                    <a href="{% url 'ingredient-create' %}">
+                    <a href="{% url 'ingredient-create' %}?next={% url 'user-ingredient' %}">
                         <i class="far fa-plus-square"></i>
                         <span>Dodaj składnik</span>
                     </a>
@@ -66,14 +66,14 @@
                     </a>
                 </div>
                 <div>
-                    <a href="#user-schedule">
+                    <a href="{% url 'user-schedule' %}#user-schedule">
                         <span>Plany: {{ user.schedules.count }}</span>
                         <i class="fa fa-arrow-circle-down"></i>
                     </a>
                 </div>
                 <div>
-                    <a href="{% url 'user-like' %}#user-like">
-                        <span>Głosy: {{ user.likes.count }}</span>
+                    <a href="{% url 'user-ingredient' %}#user-ingredient">
+                        <span>Składniki: {{ user.ingredients.count }}</span>
                         <i class="fa fa-arrow-circle-down"></i>
                     </a>
                 </div>
@@ -84,8 +84,14 @@
                     </a>
                 </div>
                 <div>
-                    <a href="{% url 'user-ingredient' %}#user-ingredient">
-                        <span>Składniki: {{ user.ingredients.count }}</span>
+                    <a href="{% url 'user-like' %}#user-like">
+                        <span>Przepisy <i class="fa fa-thumbs-up"></i>: {{ user.likes.count }}</span>
+                        <i class="fa fa-arrow-circle-down"></i>
+                    </a>
+                </div>
+                <div>
+                    <a href="{% url 'user-like-schedule' %}#user-like-schedule">
+                        <span>Plany <i class="fa fa-thumbs-up"></i>: {{ user.likes_schedule.count }}</span>
                         <i class="fa fa-arrow-circle-down"></i>
                     </a>
                 </div>

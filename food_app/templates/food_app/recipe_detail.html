@@ -6,11 +6,9 @@
             <h5 class="text-uppercase">Przepis</h5>
             <ul class="list-none-style">
                 <li>Nazwa: <b>{{ recipe }}</b></li>
-                <li>Ilość kalorii: <b>{% if recipe.calories %} {{ recipe.calories }} {% else %} ----- {% endif %} kcal</b></li>
-                <li>Czas przygotowania: <b>{{ recipe.preparation_time }}</b></li>
-                <li>Polubienia: <b>{{ likes_count }}</b>
+                <li>Polubienia: <i class="fa fa-thumbs-up"></i> <b>{{ recipe.likes.count }}</b>
                     {% if request.user.is_authenticated %}
-                        <form class="form-like-style" action="{% url 'recipe-detail' pk=recipe.pk %}" method="POST">
+                        <form class="form-like-style" action="" method="POST">
                             {% csrf_token %}
                             {% if user_like %}
                                 <button type="submit" name="button_recipe" value="like_down" title="Usuń głos">
@@ -26,9 +24,11 @@
                         <i class="fa fa-thumbs-up"></i>
                     {% endif %}
                 </li>
-                <li>Data dodania: <b>{{ recipe.create_date|date:'j E Y' }}</b></li>
+                <li>Przygotowanie: <b>{{ recipe.preparation_time }}</b></li>
+                <li>Kalorie / 100 gram: <b>{% if recipe.calories %} {{ recipe.calories }} {% else %} ----- {% endif %} kcal</b></li>
+                <li>Dodano: <b>{{ recipe.create_date|date:'j E Y' }}</b></li>
                 {% if recipe.create_by %}
-                    <li>Stworzył: <a href="{% url 'user-recipes' pk=recipe.create_by.pk %}#user-recipes">{{ recipe.create_by }}</a></li>
+                    <li>Stworzył: <a href="{% url 'user-recipes' pk=recipe.create_by.pk %}">{{ recipe.create_by }}</a></li>
                 {% endif %}
             </ul>    
         </div>
@@ -55,8 +55,8 @@
             <div class="col-12">
                 <h5>Potrzebne składniki</h5>
                 <ul>
-                    {% for ingredient in recipe.recipe_ingredients.all %}
-                    <li>{{ ingredient.ingredient }}, {{ ingredient.quantity }}</li>
+                    {% for item in recipe.recipe_ingredients.all %}
+                        <li>{{ item.ingredient }}, {{ item.quantity }}</li>
                     {% endfor %}
                 </ul>
             </div>
@@ -95,7 +95,7 @@
                                 <img src="{{ request.user.avatar.url }}" alt="Avatar">
                             </td>
                             <td class="col-11">
-                                <form class="form-comment-style" action="{% url 'recipe-detail' pk=recipe.pk %}#recipe-comments" method="POST">
+                                <form class="form-comment-style" action="" method="POST">
                                     <div class="row">
                                         <div class="col-11 d-flex">
                                             {{ form.comment.label }}
@@ -123,7 +123,7 @@
                             <img src="{{ comment.user.avatar.url }}" alt="Avatar">
                         </td>
                         <td class="col-11">
-                            <div><a href="{% url 'user-comments' pk=recipe.create_by.pk %}#user-comments">{{ comment.user }}</a><span class="text-gray-style">, {{ comment.date_added|date:"j E Y, H:i"}}</span></div>
+                            <div><a href="{% url 'user-comments' pk=recipe.create_by.pk %}">{{ comment.user }}</a><span class="text-gray-style">, {{ comment.date_added|date:"j E Y, H:i"}}</span></div>
                             <div class="text-comment-style">{{ comment.comment }}</div>
                         </td>
                     </tr>

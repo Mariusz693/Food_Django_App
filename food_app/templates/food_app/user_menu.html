@@ -7,7 +7,7 @@
             <ul class="list-none-style">
                 <li>Nazwa użytkownika: <b>{{ user }}</b></li>
                 <li>Przepisy: <b>{{ user.recipes.count }}</b></li>
-                <li>Plany: <b></b></li>
+                <li>Plany żywienia: <b>{{ user.schedules.count }}</b></li>
                 <li>Komentarze: <b>{{ user.user_comments.count }}</b></li>
             </ul>
             <div class="user-menu-style">
@@ -18,7 +18,7 @@
                     </a>
                 </div>
                 <div>
-                    <a href="">
+                    <a href="{% url 'user-schedules' pk=user.pk %}#user-schedules">
                         <i class="far fa-calendar-alt"></i>
                         <span>Plany</span>
                     </a>

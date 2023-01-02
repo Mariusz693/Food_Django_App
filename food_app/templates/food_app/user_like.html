@@ -4,9 +4,9 @@
         <div class="col-lg-9 col-md-8 col-sm-7 d-flex">
             <h5>
                 {% if search_count or search_count == 0 %}
-                    Znaleziono ({{ search_count }})
+                    Znaleziono {{ search_count }}
                 {% else %}
-                    Twoje Głosy
+                    Twoje polubione przepisy
                 {% endif %}
                 {% if is_paginated %}
                     <span class="pagination-style">
@@ -45,19 +45,22 @@
                     {% for recipe in recipe_list %}
                         <tr>
                             <td class="col-1"><img class="" src="{{ recipe.image.url }}"></td>    
-                            <td class="col-10">
+                            <td class="col-9">
                                 <ul>
                                     <li>
                                         <a href="{% url 'recipe-detail' pk=recipe.pk %}" title="Szczegóły">
                                             <b>{{ recipe.name }}</b>
                                         </a> 
                                     </li>
-                                    <li>Ilość kalorii: {% if recipe.calories %} {{ recipe.calories }} {% else %} ----- {% endif %} kcal</li>
-                                    <li>Oddane głosy: {{ recipe.likes.count }}</li>
+                                    <li>Przygotowanie: {{ recipe.preparation_time }}</li>
+                                    <li>Dodano: {{ recipe.create_date|date:'j E Y' }}</li>
                                 </ul>
                             </td>
                             <td class="col-1 text-center">
-                                <form class="form-like-style" action="{% url 'user-like' %}#user-like" method="POST">
+                                <i class="fa fa-thumbs-up"></i> {{ recipe.likes.count }}
+                            </td>
+                            <td class="col-1 text-center">
+                                <form class="form-like-style" action="" method="POST">
                                     {% csrf_token %}
                                     <button type="submit" name="like" value="{{ recipe.pk }}" title="Usuń głos">
                                         <i class="fa fa-thumbs-down"></i>

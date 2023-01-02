@@ -4,7 +4,7 @@
         <div class="col-lg-9 col-md-8 col-sm-7 d-flex">
             <h5>
                 {% if search_count or search_count == 0 %}
-                    Znaleziono ({{ search_count }})
+                    Znaleziono {{ search_count }}
                 {% else %}
                     Twoje Składniki
                 {% endif %}
@@ -44,8 +44,11 @@
                 <tbody>
                     {% for ingredient in ingredient_list %}
                         <tr>
-                            <td class="col-10">
+                            <td class="col-9">
                                 <b>{{ ingredient.name }}</b>
+                            </td>
+                            <td class="col-1 text-center" title="Przepisy">
+                                <i class="far fa-check-square"></i> {{ ingredient.recipes.count }}
                             </td>
                             <td class="col-1 text-center">
                                 <a href="{% url 'ingredient-update' pk=ingredient.pk %}?next={{ request.get_full_path }}" title="Edytuj">
@@ -53,7 +56,7 @@
                                 </a>    
                             </td>
                             <td class="col-1 text-center">
-                                <a href="{% url 'ingredient-delete' pk=ingredient.pk %}" title="Usuń">
+                                <a href="{% url 'ingredient-delete' pk=ingredient.pk %}?next={{ request.get_full_path }}" title="Usuń">
                                     <i class="far fa-minus-square danger-style"></i>
                                 </a>    
                             </td>
