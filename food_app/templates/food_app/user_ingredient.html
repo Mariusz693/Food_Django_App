@@ -44,11 +44,8 @@
                 <tbody>
                     {% for ingredient in ingredient_list %}
                         <tr>
-                            <td class="col-9">
+                            <td class="col-10">
                                 <b>{{ ingredient.name }}</b>
-                            </td>
-                            <td class="col-1 text-center" title="Przepisy">
-                                <i class="far fa-check-square"></i> {{ ingredient.recipes.count }}
                             </td>
                             <td class="col-1 text-center">
                                 <a href="{% url 'ingredient-update' pk=ingredient.pk %}?next={{ request.get_full_path }}" title="Edytuj">
